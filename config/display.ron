@@ -1,0 +1,5 @@
+(
+  title: "Rust Tetris with Amethyst.rs",
+  dimensions: Some((432, 792)),
+  resizable: false,
+)

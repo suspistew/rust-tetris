@@ -1,0 +1,11 @@
+(
+	axes: {
+		"leftright": Emulated(
+            pos: Key(Right),
+            neg: Key(Left)
+        )
+	},
+	actions: {
+		"rotate": [ [Key(Space)]],
+	},
+)
