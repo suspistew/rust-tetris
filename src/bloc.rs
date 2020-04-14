@@ -1,28 +1,19 @@
 use amethyst::ecs::prelude::{Component, DenseVecStorage};
 
-pub enum Color {
-	Gray,
-	White,
-	Black,
-	Red,
-	Yellow,
-	Brown,
-	Orange,
-	Green,
-	Cyan,
-	Blue,
-	Purple,
-	Wtf
+pub enum BlocKind{
+	Border,
+	Moving,
+	Static
 }
 
 pub struct Bloc {
-	pub color: Color,
+	pub kind: BlocKind,
 }
 
 impl Bloc {
-	pub fn new(c: Color) -> Bloc {
+	pub fn new(k: BlocKind) -> Bloc {
 		Bloc  {
-			color: c,
+			kind: k,
 		}
 	}
 }
@@ -30,3 +21,4 @@ impl Bloc {
 impl Component for Bloc {
     type Storage = DenseVecStorage<Self>;
 }
+

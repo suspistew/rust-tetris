@@ -4,7 +4,7 @@ use amethyst::{
 	core::transform::Transform,
     renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
 };
-use crate::bloc::{Bloc, Color};
+use crate::bloc::{Bloc, BlocKind};
 
 pub struct Tetris;
 
@@ -61,7 +61,7 @@ fn initialize_bloc(x: f32, y: f32, world: &mut World, sprite_render: SpriteRende
 		world
 			.create_entity()
 			.with(sprite_render)
-			.with(Bloc::new(Color::Gray))
+			.with(Bloc::new(BlocKind::Border))
 			.with(transform)
 			.build();
 }
