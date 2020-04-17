@@ -1,7 +1,7 @@
 use amethyst::{
     core::transform::TransformBundle,
+    input::{InputBundle, StringBindings},
     prelude::*,
-	input::{InputBundle, StringBindings},
     renderer::{
         plugins::{RenderFlat2D, RenderToWindow},
         types::DefaultBackend,
@@ -10,9 +10,10 @@ use amethyst::{
     utils::application_root_dir,
 };
 
-mod tetris;
 mod bloc;
 mod systems;
+mod tetris;
+mod piece;
 
 use crate::tetris::Tetris;
 
@@ -23,8 +24,8 @@ fn main() -> amethyst::Result<()> {
     let assets_dir = app_root.join("assets");
     let display_config_path = app_root.join("config").join("display.ron");
 
-	let binding_path = app_root.join("config").join("bindings.ron");
-	let input_bundle =
+    let binding_path = app_root.join("config").join("bindings.ron");
+    let input_bundle =
         InputBundle::<StringBindings>::new().with_bindings_from_file(binding_path)?;
 
     let game_data = GameDataBuilder::default()
@@ -37,8 +38,9 @@ fn main() -> amethyst::Result<()> {
                 .with_plugin(RenderFlat2D::default()),
         )?
         .with_bundle(TransformBundle::new())?
-		.with_bundle(input_bundle)?
-		.with(systems::BlocSystem, "bloc_system", &[]);
+        .with_bundle(input_bundle)?
+        .with(systems::BlocSystem, "bloc_system", &[])
+        .with(systems::PieceSystem::new(), "piece_system", &[]);
 
     let mut game = Application::new(assets_dir, Tetris, game_data)?;
     game.run();

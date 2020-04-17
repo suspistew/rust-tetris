@@ -1,9 +1,5 @@
-use amethyst::core::{
-	timing::Time,
-	SystemDesc, Transform};
 use amethyst::derive::SystemDesc;
-use amethyst::ecs::{Join, Read, ReadStorage, System, SystemData, World, WriteStorage};
-use amethyst::input::{InputHandler, StringBindings};
+use amethyst::ecs::{ReadStorage, System, SystemData};
 
 use crate::bloc::Bloc;
 
@@ -11,8 +7,7 @@ use crate::bloc::Bloc;
 pub struct BlocSystem;
 
 impl<'s> System<'s> for BlocSystem {
-    type SystemData = (ReadStorage<'s, Bloc>);
+    type SystemData = ReadStorage<'s, Bloc>;
 
-    fn run(&mut self, (blocs): Self::SystemData) {
-	}
+    fn run(&mut self, blocs: Self::SystemData) {}
 }
