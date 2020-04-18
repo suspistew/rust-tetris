@@ -1,5 +1,5 @@
-use std::vec::Vec;
 use rand::{thread_rng, Rng};
+use std::vec::Vec;
 
 #[derive(Debug)]
 pub enum PieceOrientation {
@@ -28,13 +28,12 @@ pub enum PieceKind {
     T,
     S,
     Z,
-    J, 
+    J,
     L,
 }
 
 impl PieceKind {
-
-    pub fn from_int(x: u8) -> Result<PieceKind, &'static str>{
+    pub fn from_int(x: u8) -> Result<PieceKind, &'static str> {
         match x {
             x if x == PieceKind::I as u8 => Ok(PieceKind::I),
             x if x == PieceKind::O as u8 => Ok(PieceKind::O),
@@ -127,7 +126,7 @@ impl PieceKind {
 
 #[derive(Debug)]
 pub struct Piece {
-    pub orientation:  PieceOrientation,
+    pub orientation: PieceOrientation,
     pub kind: PieceKind,
 }
 
@@ -139,16 +138,16 @@ impl Piece {
         }
     }
 
-    pub fn get_current_offsets(&self) -> Vec<(f32,f32)>{
+    pub fn get_current_offsets(&self) -> Vec<(f32, f32)> {
         self.kind.get_self_offsets(&self.orientation)
     }
 
-    pub fn random_new() -> Piece{
-        let random_piece_nb:u8 = thread_rng().gen_range(0,7);
+    pub fn random_new() -> Piece {
+        let random_piece_nb: u8 = thread_rng().gen_range(0, 7);
         let piece_kind = PieceKind::from_int(random_piece_nb).unwrap();
         Piece {
-            orientation:  PieceOrientation::PointUp,
-            kind: piece_kind
+            orientation: PieceOrientation::PointUp,
+            kind: piece_kind,
         }
     }
 }

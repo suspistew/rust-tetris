@@ -11,9 +11,9 @@ use amethyst::{
 };
 
 mod bloc;
+mod piece;
 mod systems;
 mod tetris;
-mod piece;
 
 use crate::tetris::Tetris;
 

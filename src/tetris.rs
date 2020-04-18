@@ -8,16 +8,37 @@ use amethyst::{
 
 pub struct Tetris;
 
+pub struct TetrisResource {
+    pub sprite_sheet_handle: Option<Handle<SpriteSheet>>,
+}
+
+impl TetrisResource {
+    fn new(sph: Option<Handle<SpriteSheet>>) -> TetrisResource {
+        TetrisResource {
+            sprite_sheet_handle: sph,
+        }
+    }
+}
+
+impl Default for TetrisResource {
+    fn default() -> Self {
+        TetrisResource {
+            sprite_sheet_handle: None,
+        }
+    }
+}
+
 impl SimpleState for Tetris {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let mut world = data.world;
-        let sprite_sheet_handle = load_sprite_sheet(world);
-        initialize_board_borders(world, sprite_sheet_handle);
+        let tetris_resource = load_tetris_resource(world);
+        world.insert(tetris_resource);
+        initialize_board_borders(world);
         initialize_camera(world);
     }
 }
 
-fn load_sprite_sheet(world: &mut World) -> Handle<SpriteSheet> {
+fn load_tetris_resource(world: &mut World) -> TetrisResource {
     let texture_handle = {
         let asset_loader = world.read_resource::<Loader>();
         let texture_storage = world.read_resource::<AssetStorage<Texture>>();
@@ -31,19 +52,28 @@ fn load_sprite_sheet(world: &mut World) -> Handle<SpriteSheet> {
 
     let asset_loader = world.read_resource::<Loader>();
     let sprite_sheet_store = world.read_resource::<AssetStorage<SpriteSheet>>();
-    asset_loader.load(
+    let sprite_sheet_handle = asset_loader.load(
         "textures/blocs.ron",
         SpriteSheetFormat(texture_handle),
         (),
         &sprite_sheet_store,
-    )
+    );
+    TetrisResource::new(Some(sprite_sheet_handle))
 }
 
-fn initialize_board_borders(world: &mut World, sprite_sheet_handle: Handle<SpriteSheet>) {
+fn initialize_board_borders(world: &mut World) {
+    let sprite_sheet_handle = world
+        .read_resource::<TetrisResource>()
+        .sprite_sheet_handle
+        .as_ref()
+        .unwrap()
+        .clone();
+
     let sprite_render = SpriteRender {
         sprite_sheet: sprite_sheet_handle.clone(),
         sprite_number: 1,
     };
+
     for y in 0..22 {
         initialize_bloc(0.0, y as f32 * 36.0, world, sprite_render.clone());
         initialize_bloc(11.0 * 36.0, y as f32 * 36.0, world, sprite_render.clone());

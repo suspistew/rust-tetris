@@ -9,5 +9,5 @@ pub struct BlocSystem;
 impl<'s> System<'s> for BlocSystem {
     type SystemData = ReadStorage<'s, Bloc>;
 
-    fn run(&mut self, blocs: Self::SystemData) {}
+    fn run(&mut self, _blocs: Self::SystemData) {}
 }

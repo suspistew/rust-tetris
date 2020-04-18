@@ -1,16 +1,16 @@
 use amethyst::ecs::prelude::{Component, DenseVecStorage};
 
+#[derive(Debug)]
 pub enum BlocKind {
     Border,
     Moving,
     Static,
 }
 
+#[derive(Debug)]
 pub struct Bloc {
     pub kind: BlocKind,
 }
-
-pub struct FallingBloc;
 
 impl Bloc {
     pub fn new(k: BlocKind) -> Bloc {
@@ -19,9 +19,5 @@ impl Bloc {
 }
 
 impl Component for Bloc {
-    type Storage = DenseVecStorage<Self>;
-}
-
-impl Component for FallingBloc {
     type Storage = DenseVecStorage<Self>;
 }
