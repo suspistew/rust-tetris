@@ -1,6 +1,6 @@
-use crate::bloc::{Bloc, BlocKind};
-use crate::piece::Piece;
-use crate::tetris::TetrisResource;
+use crate::bloc::{Bloc, BlocKind, BLOC_SIZE};
+use crate::piece::{Piece, PieceSystemState};
+use crate::tetris::{TetrisResource, MOVEMENT_DELAY};
 use amethyst::assets::Handle;
 use amethyst::core::components::Transform;
 use amethyst::core::timing::Time;
@@ -11,21 +11,12 @@ use amethyst::ecs::{
 use amethyst::renderer::{SpriteRender, SpriteSheet};
 use rand::{thread_rng, Rng};
 
-const MOVEMENT_DELAY: f32 = 0.1;
-
-enum PieceSystemState {
-    MOVING(u32, u32),
-    WAITING,
-}
-
 #[derive(SystemDesc)]
 pub struct PieceSystem {
     #[system_desc(skip)]
     active_piece: Piece,
     #[system_desc(skip)]
     movement_timer: Option<f32>,
-    #[system_desc(skip)]
-    piece_state: PieceSystemState,
 }
 
 impl PieceSystem {
@@ -33,7 +24,6 @@ impl PieceSystem {
         PieceSystem {
             active_piece: Piece::random_new(),
             movement_timer: Some(MOVEMENT_DELAY),
-            piece_state: PieceSystemState::WAITING,
         }
     }
 
@@ -47,31 +37,31 @@ impl<'s> System<'s> for PieceSystem {
         WriteStorage<'s, Bloc>,
         WriteStorage<'s, Transform>,
         Read<'s, Time>,
-        Read<'s, TetrisResource>,
+        Write<'s, TetrisResource>,
         WriteStorage<'s, SpriteRender>,
         Entities<'s>,
     );
 
     fn run(
         &mut self,
-        (mut allblocs, mut transforms, time, tetris_resource, mut sprite_renders, entities): Self::SystemData,
+        (mut allblocs, mut transforms, time, mut tetris_resource, mut sprite_renders, entities): Self::SystemData,
     ) {
         if let Some(mut timer) = self.movement_timer {
             timer -= time.delta_seconds();
-            if timer <= 0.0 {
-                match self.piece_state {
+            if timer <= 0.0 || tetris_resource.movement_timer < timer {
+                match tetris_resource.piece_state {
                     PieceSystemState::WAITING => {
+                        tetris_resource.piece_state = PieceSystemState::MOVING(5, 22);
                         let sprite_sheet_handle =
                             tetris_resource.sprite_sheet_handle.as_ref().unwrap();
                         self.switch_to_next_piece();
-                        self.piece_state = PieceSystemState::MOVING(5, 22);
                         let offsets = self.active_piece.get_current_offsets();
                         let color: usize = thread_rng().gen_range(1, 10);
                         for offset in offsets {
                             let mut t = Transform::default();
                             t.set_translation_xyz(
-                                5.0 * 36.0 + offset.0 * 36.0,
-                                20.0 * 36.0 + offset.1 * 36.0,
+                                5.0 * BLOC_SIZE + offset.0 * BLOC_SIZE,
+                                20.0 * BLOC_SIZE + offset.1 * BLOC_SIZE,
                                 0.0,
                             );
                             entities
@@ -90,8 +80,8 @@ impl<'s> System<'s> for PieceSystem {
                         let mut piece_values: Vec<(u32, u32)> = Vec::new();
                         for (bloc, mut transform) in (&mut allblocs, &mut transforms).join() {
                             let t = (
-                                (transform.translation().x / 36.0) as u32,
-                                (transform.translation().y / 36.0) as u32,
+                                (transform.translation().x / BLOC_SIZE) as u32,
+                                (transform.translation().y / BLOC_SIZE) as u32,
                             );
                             match bloc.kind {
                                 BlocKind::Moving => piece_values.push(t),
@@ -116,7 +106,7 @@ impl<'s> System<'s> for PieceSystem {
                             {
                                 match bloc.kind {
                                     BlocKind::Moving => {
-                                        transform.move_down(36.0);
+                                        transform.move_down(BLOC_SIZE);
                                     }
                                     _ => {}
                                 };
@@ -127,7 +117,7 @@ impl<'s> System<'s> for PieceSystem {
                                 match bloc.kind {
                                     BlocKind::Moving => {
                                         bloc.kind = BlocKind::Static;
-                                        self.piece_state = PieceSystemState::WAITING;
+                                        tetris_resource.piece_state = PieceSystemState::WAITING;
                                     }
                                     _ => {}
                                 }
@@ -135,7 +125,7 @@ impl<'s> System<'s> for PieceSystem {
                         }
                     }
                 }
-                self.movement_timer.replace(MOVEMENT_DELAY);
+                self.movement_timer.replace(tetris_resource.movement_timer);
             } else {
                 self.movement_timer.replace(timer);
             }

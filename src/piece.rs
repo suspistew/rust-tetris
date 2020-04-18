@@ -1,6 +1,11 @@
 use rand::{thread_rng, Rng};
 use std::vec::Vec;
 
+pub enum PieceSystemState {
+    MOVING(u32, u32),
+    WAITING,
+}
+
 #[derive(Debug)]
 pub enum PieceOrientation {
     PointUp,

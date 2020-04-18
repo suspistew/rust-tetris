@@ -1,4 +1,5 @@
-use crate::bloc::{Bloc, BlocKind};
+use crate::bloc::{Bloc, BlocKind, BLOC_SIZE};
+use crate::piece::PieceSystemState;
 use amethyst::{
     assets::{AssetStorage, Handle, Loader},
     core::transform::Transform,
@@ -8,14 +9,20 @@ use amethyst::{
 
 pub struct Tetris;
 
+pub const MOVEMENT_DELAY: f32 = 0.3;
+
 pub struct TetrisResource {
     pub sprite_sheet_handle: Option<Handle<SpriteSheet>>,
+    pub movement_timer: f32,
+    pub piece_state: PieceSystemState,
 }
 
 impl TetrisResource {
     fn new(sph: Option<Handle<SpriteSheet>>) -> TetrisResource {
         TetrisResource {
             sprite_sheet_handle: sph,
+            movement_timer: MOVEMENT_DELAY,
+            piece_state: PieceSystemState::WAITING,
         }
     }
 }
@@ -24,6 +31,8 @@ impl Default for TetrisResource {
     fn default() -> Self {
         TetrisResource {
             sprite_sheet_handle: None,
+            movement_timer: MOVEMENT_DELAY,
+            piece_state: PieceSystemState::WAITING,
         }
     }
 }
@@ -75,13 +84,18 @@ fn initialize_board_borders(world: &mut World) {
     };
 
     for y in 0..22 {
-        initialize_bloc(0.0, y as f32 * 36.0, world, sprite_render.clone());
-        initialize_bloc(11.0 * 36.0, y as f32 * 36.0, world, sprite_render.clone());
+        initialize_bloc(0.0, y as f32 * BLOC_SIZE, world, sprite_render.clone());
+        initialize_bloc(
+            11.0 * BLOC_SIZE,
+            y as f32 * BLOC_SIZE,
+            world,
+            sprite_render.clone(),
+        );
         if y == 0 {
             for x in 1..11 {
                 initialize_bloc(
-                    x as f32 * 36.0,
-                    y as f32 * 36.0,
+                    x as f32 * BLOC_SIZE,
+                    y as f32 * BLOC_SIZE,
                     world,
                     sprite_render.clone(),
                 );

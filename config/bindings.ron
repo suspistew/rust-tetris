@@ -6,6 +6,9 @@
         )
 	},
 	actions: {
-		"rotate": [ [Key(Space)]],
+		"accelerate": [ [Key(S)]],
+		"rotate": [ [Key(Z)]],
+		"left": [ [Key(Q)]],
+		"right": [ [Key(D)]],
 	},
 )

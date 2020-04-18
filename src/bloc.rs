@@ -1,5 +1,7 @@
 use amethyst::ecs::prelude::{Component, DenseVecStorage};
 
+pub const BLOC_SIZE: f32 = 36.0;
+
 #[derive(Debug)]
 pub enum BlocKind {
     Border,
