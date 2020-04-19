@@ -1,11 +1,13 @@
 use crate::bloc::{Bloc, BlocKind, BLOC_SIZE};
-use crate::piece::PieceSystemState;
+use crate::piece::{PieceSystemState, Piece};
 use amethyst::{
     assets::{AssetStorage, Handle, Loader},
     core::transform::Transform,
     prelude::*,
     renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
 };
+
+use rand::{thread_rng, Rng};
 
 pub struct Tetris;
 
@@ -15,6 +17,7 @@ pub struct TetrisResource {
     pub sprite_sheet_handle: Option<Handle<SpriteSheet>>,
     pub movement_timer: f32,
     pub piece_state: PieceSystemState,
+    pub active_piece: Piece,
 }
 
 impl TetrisResource {
@@ -23,7 +26,12 @@ impl TetrisResource {
             sprite_sheet_handle: sph,
             movement_timer: MOVEMENT_DELAY,
             piece_state: PieceSystemState::WAITING,
+            active_piece: Piece::random_new(thread_rng().gen_range(1, 10)),
         }
+    }
+
+    pub fn switch_to_next_piece(&mut self) {
+        self.active_piece = Piece::random_new(thread_rng().gen_range(1, 10));
     }
 }
 
@@ -33,6 +41,7 @@ impl Default for TetrisResource {
             sprite_sheet_handle: None,
             movement_timer: MOVEMENT_DELAY,
             piece_state: PieceSystemState::WAITING,
+            active_piece: Piece::random_new(thread_rng().gen_range(1, 10)),
         }
     }
 }

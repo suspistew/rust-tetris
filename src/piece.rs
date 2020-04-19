@@ -62,7 +62,7 @@ impl PieceKind {
         PieceKind::get_offsets(self, &orientation)
     }
 
-    fn get_offsets(kind: &PieceKind, orientation: &PieceOrientation) -> Vec<(f32, f32)> {
+    pub fn get_offsets(kind: &PieceKind, orientation: &PieceOrientation) -> Vec<(f32, f32)> {
         match kind {
             PieceKind::I => PieceKind::get_i_offsets(orientation),
             PieceKind::O => vec![(1.0, 1.0), (2.0, 1.0), (1.0, 2.0), (2.0, 2.0)],
@@ -133,13 +133,15 @@ impl PieceKind {
 pub struct Piece {
     pub orientation: PieceOrientation,
     pub kind: PieceKind,
+    pub color: usize,
 }
 
 impl Piece {
-    pub fn new(o: PieceOrientation, k: PieceKind) -> Piece {
+    pub fn new(o: PieceOrientation, k: PieceKind, c: usize) -> Piece {
         Piece {
             orientation: o,
             kind: k,
+            color: c,
         }
     }
 
@@ -147,12 +149,17 @@ impl Piece {
         self.kind.get_self_offsets(&self.orientation)
     }
 
-    pub fn random_new() -> Piece {
+    pub fn rotate(&mut self) {
+        self.orientation = self.orientation.next_orientation();
+    }
+
+    pub fn random_new(c: usize) -> Piece {
         let random_piece_nb: u8 = thread_rng().gen_range(0, 7);
         let piece_kind = PieceKind::from_int(random_piece_nb).unwrap();
         Piece {
             orientation: PieceOrientation::PointUp,
             kind: piece_kind,
+            color: c
         }
     }
 }

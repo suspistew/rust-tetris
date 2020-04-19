@@ -39,9 +39,9 @@ fn main() -> amethyst::Result<()> {
         )?
         .with_bundle(TransformBundle::new())?
         .with_bundle(input_bundle)?
-        .with(systems::BlocSystem, "bloc_system", &[])
         .with(systems::PieceSystem::new(), "piece_system", &[])
-        .with(systems::MoveSystem::new(), "move_system", &[]);
+        .with(systems::MoveSystem::new(), "move_system", &[])
+        .with(systems::RotationSystem::new(), "rotation_system", &[]);
 
     let mut game = Application::new(assets_dir, Tetris, game_data)?;
     game.run();
