@@ -26,12 +26,12 @@ impl TetrisResource {
             sprite_sheet_handle: sph,
             movement_timer: MOVEMENT_DELAY,
             piece_state: PieceSystemState::WAITING,
-            active_piece: Piece::random_new(thread_rng().gen_range(1, 10)),
+            active_piece: Piece::random_new(thread_rng().gen_range(3, 10)),
         }
     }
 
     pub fn switch_to_next_piece(&mut self) {
-        self.active_piece = Piece::random_new(thread_rng().gen_range(1, 10));
+        self.active_piece = Piece::random_new(thread_rng().gen_range(3, 10));
     }
 }
 
@@ -41,7 +41,7 @@ impl Default for TetrisResource {
             sprite_sheet_handle: None,
             movement_timer: MOVEMENT_DELAY,
             piece_state: PieceSystemState::WAITING,
-            active_piece: Piece::random_new(thread_rng().gen_range(1, 10)),
+            active_piece: Piece::random_new(thread_rng().gen_range(3, 10)),
         }
     }
 }
